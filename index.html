@@ -24,42 +24,59 @@ header{position:sticky;top:0;z-index:5;background:#fffdfbeF;backdrop-filter:blur
 <script src="./cart.js"></script>
 <script>
 document.getElementById('year').textContent=new Date().getFullYear();
-(async function loadProducts(){
+
+(function(){
  const grid=document.getElementById('product-grid');
+ const searchInput=document.getElementById('product-search');
+ const clearButton=document.getElementById('clear-search');
+ let products=[];
  const esc=value=>String(value??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
- try{
-  const response=await fetch('./data/products.json?cache='+Date.now());
-  if(!response.ok) throw new Error('Catalogue request failed: '+response.status);
-  const catalogue=await response.json();
-  const products=Array.isArray(catalogue.products)?catalogue.products:[];
-  if(!products.length){grid.innerHTML='<p class="catalogue-status">New sticker designs are coming soon. Message us to request a custom design!</p>';return;}
-  const searchInput=document.getElementById('product-search');
-  const clearButton=document.getElementById('clear-search');
-  const renderProducts=query=>{
-   const term=query.trim().toLocaleLowerCase();
-   const matches=products.filter(product=>{
-    const searchable=[product.name,product.category,product.description].filter(Boolean).join(' ').toLocaleLowerCase();
-    return searchable.includes(term);
-   });
-   clearButton.hidden=!query;
-   if(!matches.length){grid.innerHTML='<p class="catalogue-status">No stickers found for “'+esc(query.trim())+'”. Try another name or keyword.</p>';return;}
-   grid.innerHTML=matches.map(product=>{
-    const pictures=Array.isArray(product.images)?product.images.map(item=>typeof item==='string'?item:(item&&item.image)||'').filter(Boolean):(product.image?[product.image]:[]);
-    const image=pictures.length?'<div class="product-gallery"><img class="product-photo" src="'+esc(pictures[0])+'" alt="'+esc(product.name)+'" loading="lazy"></div>':'<div class="card-art bgpink">🎀✨</div>';
-    const description=String(product.description||'').replace(/[#*_>\-]/g,' ').replace(/\s+/g,' ').trim();
-    const shortDescription=description.length>180?description.slice(0,177)+'…':description;
-    const price=product.price?'<div class="product-price">Rs. '+esc(product.price)+'</div>':'';
-    const detailsUrl='product.html?product='+encodeURIComponent(product.name||'');
-    return '<article class="card product-card"><a class="product-details-link" href="'+detailsUrl+'">'+image+'<h3>'+esc(product.name||'Sticker design')+'</h3><p>'+esc(shortDescription)+'</p>'+price+'</a><div class="product-actions"><a class="product-order" href="'+detailsUrl+'">View details ↗</a><button class="add-cart" type="button" data-add-to-cart data-name="'+esc(product.name||'Sticker product')+'" data-price="'+esc(product.price||0)+'" data-image="'+esc(pictures[0]||'')+'">Add to cart +</button></div></article>';
-   }).join('');
-  };
-  searchInput.addEventListener('input',()=>renderProducts(searchInput.value));
-  clearButton.addEventListener('click',()=>{searchInput.value='';renderProducts('');searchInput.focus();});
-  renderProducts('');
- }catch(error){
-  grid.innerHTML='<p class="catalogue-status">We could not load the sticker catalogue right now. Please contact us on WhatsApp to order.</p>';
-  console.error(error);
+ const normalize=value=>String(value??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase().trim();
+
+ function renderProducts(query){
+  const term=normalize(query);
+  const matches=products.filter(product=>{
+   const searchable=normalize([product.name,product.category,product.description].filter(Boolean).join(' '));
+   return searchable.includes(term);
+  });
+  clearButton.hidden=!String(query||'').length;
+  if(!matches.length){
+   grid.innerHTML='<p class="catalogue-status">No stickers found for “'+esc(query.trim())+'”. Try another name or keyword.</p>';
+   return;
+  }
+  grid.innerHTML=matches.map(product=>{
+   const pictures=Array.isArray(product.images)?product.images.map(item=>typeof item==='string'?item:(item&&item.image)||'').filter(Boolean):(product.image?[product.image]:[]);
+   const image=pictures.length?'<div class="product-gallery"><img class="product-photo" src="'+esc(pictures[0])+'" alt="'+esc(product.name)+'" loading="lazy"></div>':'<div class="card-art bgpink">🎀✨</div>';
+   const description=String(product.description||'').replace(/[#*_>\-]/g,' ').replace(/\s+/g,' ').trim();
+   const shortDescription=description.length>180?description.slice(0,177)+'…':description;
+   const price=product.price?'<div class="product-price">Rs. '+esc(product.price)+'</div>':'';
+   const detailsUrl='product.html?product='+encodeURIComponent(product.name||'');
+   return '<article class="card product-card"><a class="product-details-link" href="'+detailsUrl+'">'+image+'<h3>'+esc(product.name||'Sticker design')+'</h3><p>'+esc(shortDescription)+'</p>'+price+'</a><div class="product-actions"><a class="product-order" href="'+detailsUrl+'">View details ↗</a><button class="add-cart" type="button" data-add-to-cart data-name="'+esc(product.name||'Sticker product')+'" data-price="'+esc(product.price||0)+'" data-image="'+esc(pictures[0]||'')+'">Add to cart +</button></div></article>';
+  }).join('');
  }
+
+ // Bind the search immediately, rather than waiting for the catalogue request.
+ searchInput.addEventListener('input',()=>renderProducts(searchInput.value));
+ clearButton.addEventListener('click',()=>{searchInput.value='';renderProducts('');searchInput.focus();});
+ searchInput.addEventListener('keydown',event=>{
+  if(event.key==='Enter'){
+   document.getElementById('collections').scrollIntoView({behavior:'smooth',block:'start'});
+  }
+ });
+
+ (async function loadProducts(){
+  try{
+   const response=await fetch('./data/products.json?cache='+Date.now());
+   if(!response.ok) throw new Error('Catalogue request failed: '+response.status);
+   const catalogue=await response.json();
+   products=Array.isArray(catalogue)?catalogue:(Array.isArray(catalogue.products)?catalogue.products:[]);
+   renderProducts(searchInput.value);
+   if(!products.length) grid.innerHTML='<p class="catalogue-status">New sticker designs are coming soon. Message us to request a custom design!</p>';
+  }catch(error){
+   grid.innerHTML='<p class="catalogue-status">We could not load the sticker catalogue right now. Please contact us on WhatsApp to order.</p>';
+   console.error('Stickieholic catalogue error:',error);
+  }
+ })();
 })();
 </script>
 </body></html>
