@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#fff7f5">
+<title>Product Details | Stickieholic</title>
+<style>
+:root{--ink:#392d35;--muted:#766b73;--pink:#f6b8c8;--rose:#e77e9d;--cream:#fff7f1;--lilac:#e9def8;--white:#fff;--line:#f0e4e5}
+*{box-sizing:border-box}body{margin:0;background:#fffdfb;color:var(--ink);font-family:ui-rounded,"Trebuchet MS",system-ui,sans-serif}a{color:inherit;text-decoration:none}.wrap{width:min(1080px,92%);margin:auto}header{background:#fffdfbef;border-bottom:1px solid var(--line)}.nav{height:72px;display:flex;align-items:center;justify-content:space-between}.brand{font-weight:950;letter-spacing:.04em;font-size:1.2rem}.brand span{color:var(--rose)}.back{color:#a24e6b;font-weight:800}.layout{display:grid;grid-template-columns:1fr 1fr;gap:48px;padding:55px 0 75px;align-items:start}.main-photo{width:100%;height:430px;object-fit:contain;background:#fff0f3;border-radius:25px;padding:12px}.thumbs{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}.thumb{width:82px;height:82px;object-fit:cover;border-radius:13px;border:2px solid transparent;cursor:pointer;background:#fff0f3}.thumb.active{border-color:var(--rose)}.kicker{color:var(--rose);font-size:.78rem;font-weight:900;letter-spacing:.13em;text-transform:uppercase}.info h1{font-size:clamp(2rem,4vw,3rem);line-height:1.1;letter-spacing:-.04em;margin:12px 0}.price{font-size:1.35rem;font-weight:950;color:#a24e6b;margin:18px 0}.description{color:var(--muted);line-height:1.8;white-space:pre-line}.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}.btn{display:inline-flex;padding:14px 20px;border-radius:99px;background:var(--rose);color:white;font-weight:850}.btn.secondary{background:var(--ink)}.note{font-size:.85rem;color:var(--muted);margin-top:18px}.empty{padding:70px 0;text-align:center;color:var(--muted)}footer{border-top:1px solid var(--line);padding:25px 0;color:var(--muted);font-size:.85rem}@media(max-width:760px){.layout{grid-template-columns:1fr;gap:28px;padding-top:30px}.main-photo{height:340px}.thumb{width:70px;height:70px}}
+</style>
+</head>
+<body>
+<header><div class="wrap nav"><a class="brand" href="./">STICKIE<span>HOLIC</span></a><a class="back" href="./#collections">← Back to products</a></div></header>
+<main class="wrap" id="content"><p class="empty">Loading product details…</p></main>
+<footer><div class="wrap">© <span id="year"></span> Stickieholic · Stick a little happiness.</div></footer>
+<script>
+document.getElementById('year').textContent=new Date().getFullYear();
+const esc=value=>String(value??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+(async()=>{
+ const content=document.getElementById('content');
+ const requested=new URLSearchParams(location.search).get('product');
+ if(!requested){content.innerHTML='<div class="empty"><h2>Product not selected</h2><a class="back" href="./#collections">Return to collections</a></div>';return;}
+ try{
+  const response=await fetch('./data/products.json?cache='+Date.now());
+  if(!response.ok)throw new Error('Could not load products');
+  const data=await response.json();
+  const products=Array.isArray(data.products)?data.products:[];
+  const product=products.find(item=>item.name===requested);
+  if(!product){content.innerHTML='<div class="empty"><h2>Product not found</h2><a class="back" href="./#collections">Back to collections</a></div>';return;}
+  const pictures=Array.isArray(product.images)?product.images.map(item=>typeof item==='string'?item:(item&&item.image)||'').filter(Boolean):(product.image?[product.image]:[]);
+  const description=String(product.description||'Product details coming soon.').replace(/\r/g,'');
+  const message=encodeURIComponent('Hi Stickieholic! I would like to order '+product.name+'. Please guide me with the next steps.');
+  content.innerHTML='<div class="layout"><div><img id="main-photo" class="main-photo" src="'+esc(pictures[0]||'')+'" alt="'+esc(product.name)+'" '+(pictures.length?'':'hidden')+'><div class="thumbs">'+pictures.map((src,i)=>'<img class="thumb '+(i===0?'active':'')+'" src="'+esc(src)+'" alt="Product picture '+(i+1)+'" data-index="'+i+'">').join('')+'</div>'+(!pictures.length?'<div class="empty">No product pictures uploaded yet.</div>':'')+'</div><section class="info"><span class="kicker">'+esc(product.category||'Stickieholic collection')+'</span><h1>'+esc(product.name)+'</h1>'+(product.price?'<div class="price">Rs. '+esc(product.price)+'</div>':'')+'<div class="description">'+esc(description)+'</div><div class="actions"><a class="btn" href="https://wa.me/923132999127?text='+message+'" target="_blank" rel="noopener noreferrer">Order on WhatsApp ↗</a><a class="btn secondary" href="./#collections">Continue shopping</a></div><p class="note">Need help? Contact us on WhatsApp for product and delivery details.</p></section></div>';
+  document.querySelectorAll('.thumb').forEach(thumb=>thumb.addEventListener('click',()=>{document.getElementById('main-photo').src=pictures[Number(thumb.dataset.index)];document.querySelectorAll('.thumb').forEach(item=>item.classList.remove('active'));thumb.classList.add('active');}));
+ }catch(error){content.innerHTML='<div class="empty">Sorry, product details could not be loaded. Please try again.</div>';console.error(error);}
+})();
+</script>
+</body></html>
