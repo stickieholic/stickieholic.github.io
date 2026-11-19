@@ -22,6 +22,10 @@ collections:
               - { label: "Product name", name: "name", widget: "string" }
               - { label: "Description", name: "description", widget: "text" }
               - { label: "Price (PKR)", name: "price", widget: "string", required: false }
-              - { label: "Product picture", name: "image", widget: "image", required: false }
+              - label: "Product pictures"
+                name: "images"
+                widget: "list"
+                required: false
+                field: { label: "Picture", name: "image", widget: "image" }
               - { label: "Category", name: "category", widget: "string", required: false }
               - { label: "Featured", name: "featured", widget: "boolean", default: false }
