@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#fff7f5"><title>Your Cart | Stickieholic</title>
+<style>
+:root{--ink:#392d35;--muted:#766b73;--rose:#e77e9d;--line:#f0e4e5;--cream:#fff7f1}*{box-sizing:border-box}body{margin:0;background:#fffdfb;color:var(--ink);font-family:ui-rounded,"Trebuchet MS",system-ui,sans-serif}a{color:inherit;text-decoration:none}.wrap{width:min(900px,92%);margin:auto}header{background:#fffdfbef;border-bottom:1px solid var(--line)}.nav{height:72px;display:flex;align-items:center;justify-content:space-between}.brand{font-weight:950;letter-spacing:.04em;font-size:1.2rem}.brand span{color:var(--rose)}.back{color:#a24e6b;font-weight:800}.page{padding:40px 0 75px}h1{font-size:clamp(2rem,5vw,3rem);letter-spacing:-.04em;margin:0 0 8px}.muted{color:var(--muted)}.cart-list{display:grid;gap:13px;margin:28px 0}.item{display:grid;grid-template-columns:88px 1fr auto;gap:16px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:19px;padding:13px}.item img{width:88px;height:88px;object-fit:cover;border-radius:13px;background:#fff0f3}.item h3{font-size:1rem;margin:0 0 5px}.item-price{color:#a24e6b;font-weight:850}.quantity{display:flex;align-items:center;gap:10px;margin-top:9px}.quantity button,.remove{border:1px solid var(--line);background:#fff;border-radius:50%;width:30px;height:30px;cursor:pointer;color:var(--ink);font-size:1rem}.remove{border-radius:9px;width:auto;padding:5px 9px;font-size:.8rem;color:#a24e6b}.summary{background:var(--cream);border:1px solid var(--line);border-radius:20px;padding:22px;margin-top:20px}.total{display:flex;justify-content:space-between;font-weight:950;font-size:1.2rem}.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:20px}.btn{border:0;display:inline-flex;align-items:center;justify-content:center;padding:14px 19px;border-radius:99px;background:var(--rose);color:#fff;font:inherit;font-weight:850;cursor:pointer}.btn.dark{background:var(--ink)}.btn:disabled{opacity:.45;cursor:not-allowed}.empty{text-align:center;padding:65px 20px;background:#fff;border:1px dashed var(--line);border-radius:20px}.empty p{color:var(--muted)}.notice{font-size:.85rem;color:var(--muted);line-height:1.6;margin-top:14px}footer{border-top:1px solid var(--line);padding:25px 0;color:var(--muted);font-size:.85rem}@media(max-width:540px){.item{grid-template-columns:66px 1fr;gap:11px}.item img{width:66px;height:66px}.item>div:last-child{grid-column:2}.actions .btn{width:100%}}
+</style></head>
+<body><header><div class="wrap nav"><a class="brand" href="./">STICKIE<span>HOLIC</span></a><a class="back" href="./#collections">← Continue shopping</a></div></header>
+<main class="wrap page"><h1>Your shopping cart 🛒</h1><p class="muted">Review your selected stickers before placing your order.</p><div id="cart-content"><p class="muted">Loading your cart…</p></div></main>
+<footer><div class="wrap">© <span id="year"></span> Stickieholic · Stick a little happiness.</div></footer>
+<script src="./cart.js"></script><script>
+document.getElementById('year').textContent=new Date().getFullYear();
+const root=document.getElementById('cart-content');
+const esc=value=>String(value??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+const render=()=>{
+ const items=StickieholicCart.read();
+ if(!items.length){root.innerHTML='<div class="empty"><h2>Your cart is empty</h2><p>Find something cute in our collections and add it here.</p><a class="btn" href="./#collections">Explore stickers</a></div>';return;}
+ const total=items.reduce((sum,item)=>sum+(Number(item.price)||0)*(Number(item.quantity)||1),0);
+ root.innerHTML='<div class="cart-list">'+items.map((item,index)=>'<article class="item"><img src="'+esc(item.image||'')+'" alt="'+esc(item.name)+'"><div><h3>'+esc(item.name)+'</h3><div class="item-price">'+StickieholicCart.money(item.price)+' each</div><div class="quantity"><button type="button" data-action="minus" data-index="'+index+'" aria-label="Decrease quantity">−</button><strong>'+Number(item.quantity||1)+'</strong><button type="button" data-action="plus" data-index="'+index+'" aria-label="Increase quantity">+</button></div></div><div><strong>'+StickieholicCart.money((Number(item.price)||0)*(Number(item.quantity)||1))+'</strong><br><button class="remove" type="button" data-action="remove" data-index="'+index+'">Remove</button></div></article>').join('')+'</div><section class="summary"><div class="total"><span>Subtotal</span><span>'+StickieholicCart.money(total)+'</span></div><p class="notice">Delivery charges and final order details can be confirmed with Stickieholic when you send your order.</p><div class="actions"><button class="btn" id="order-whatsapp" type="button">Order on WhatsApp ↗</button><button class="btn dark" id="order-instagram" type="button">Order on Instagram ↗</button></div><p class="notice" id="order-note" aria-live="polite">WhatsApp opens with your full order prepared. For Instagram, your order message will be copied so you can paste it into a DM.</p></section>';
+};
+root.addEventListener('click',async event=>{
+ const action=event.target.closest('[data-action]');
+ if(action){const items=StickieholicCart.read(),index=Number(action.dataset.index);if(!items[index])return;
+  if(action.dataset.action==='plus')items[index].quantity++;
+  if(action.dataset.action==='minus')items[index].quantity=Math.max(1,items[index].quantity-1);
+  if(action.dataset.action==='remove')items.splice(index,1);
+  StickieholicCart.save(items);render();return;
+ }
+ if(event.target.id==='order-whatsapp'||event.target.id==='order-instagram'){
+  const items=StickieholicCart.read();if(!items.length)return;
+  const total=items.reduce((sum,item)=>sum+(Number(item.price)||0)*(Number(item.quantity)||1),0);
+  const lines=items.map((item,index)=>(index+1)+'. '+item.name+' — '+StickieholicCart.money(item.price)+' × '+item.quantity+' = '+StickieholicCart.money((Number(item.price)||0)*item.quantity));
+  const message='Hi Stickieholic! I would like to place an order:\n\n'+lines.join('\n')+'\n\nSubtotal: '+StickieholicCart.money(total)+'\n\nPlease confirm availability, delivery charges and next steps. Thank you!';
+  if(event.target.id==='order-whatsapp'){window.open('https://wa.me/923132999127?text='+encodeURIComponent(message),'_blank','noopener');}
+  else{
+   const note=document.getElementById('order-note');
+   try{await navigator.clipboard.writeText(message);note.textContent='Your full order message has been copied. Paste it into your Instagram DM.';}
+   catch{note.textContent='Please copy your order details from the message shown below, then paste them into Instagram DM.';const area=document.createElement('textarea');area.value=message;area.style.position='fixed';area.style.opacity='0';document.body.appendChild(area);area.select();try{document.execCommand('copy')}catch{}area.remove();}
+   window.open('https://www.instagram.com/stickieholic/','_blank','noopener');
+  }
+ }
+});
+window.addEventListener('stickieholic-cart-updated',render);
+render();
+</script></body></html>
