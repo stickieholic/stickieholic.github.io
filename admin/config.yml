@@ -1,0 +1,27 @@
+backend:
+  name: turbo-github
+  turbo_site_id: 179aa5d8-d1f5-4181-876f-d6aafd16e290
+  branch: main
+
+media_folder: "images/uploads"
+public_folder: "/images/uploads"
+
+collections:
+  - name: "catalog"
+    label: "Product catalogue"
+    files:
+      - name: "products"
+        label: "Products"
+        file: "data/products.json"
+        fields:
+          - name: "products"
+            label: "Products"
+            widget: "list"
+            summary: "{{fields.name}}"
+            fields:
+              - { label: "Product name", name: "name", widget: "string" }
+              - { label: "Description", name: "description", widget: "text" }
+              - { label: "Price (PKR)", name: "price", widget: "string", required: false }
+              - { label: "Product picture", name: "image", widget: "image", required: false }
+              - { label: "Category", name: "category", widget: "string", required: false }
+              - { label: "Featured", name: "featured", widget: "boolean", default: false }
