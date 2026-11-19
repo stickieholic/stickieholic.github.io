@@ -34,7 +34,7 @@ document.getElementById('year').textContent=new Date().getFullYear();
   if(!products.length){grid.innerHTML='<p class="catalogue-status">New sticker designs are coming soon. Message us to request a custom design!</p>';return;}
   grid.innerHTML=products.map(product=>{
    const pictures=Array.isArray(product.images)?product.images.map(item=>typeof item==='string'?item:(item&&item.image)||'').filter(Boolean):(product.image?[product.image]:[]);
-   const image=pictures.length?'<div class="product-gallery">'+pictures.map((src,index)=>'<a href="'+esc(src)+'" target="_blank" rel="noopener noreferrer" aria-label="Open '+esc(product.name)+' picture '+(index+1)+'"><img class="product-photo" src="'+esc(src)+'" alt="'+esc(product.name)+' - picture '+(index+1)+'" loading="lazy"></a>').join('')+'</div>':'<div class="card-art bgpink">🎀✨</div>';
+   const image=pictures.length?'<div class="product-gallery"><img class="product-photo" src="'+esc(pictures[0])+'" alt="'+esc(product.name)+'" loading="lazy"></div>':'<div class="card-art bgpink">🎀✨</div>';
    const description=String(product.description||'').replace(/[#*_>\-]/g,' ').replace(/\s+/g,' ').trim();
    const shortDescription=description.length>180?description.slice(0,177)+'…':description;
    const price=product.price?'<div class="product-price">Rs. '+esc(product.price)+'</div>':'';
