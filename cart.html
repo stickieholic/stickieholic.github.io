@@ -14,7 +14,7 @@ const render=()=>{
  const items=StickieholicCart.read();
  if(!items.length){root.innerHTML='<div class="empty"><h2>Your cart is empty</h2><p>Find something cute in our collections and add it here.</p><a class="btn" href="./#collections">Explore stickers</a></div>';return;}
  const total=items.reduce((sum,item)=>sum+(Number(item.price)||0)*(Number(item.quantity)||1),0);
- root.innerHTML='<div class="cart-list">'+items.map((item,index)=>'<article class="item"><img src="'+esc(item.image||'')+'" alt="'+esc(item.name)+'"><div><h3>'+esc(item.name)+'</h3><div class="item-price">'+StickieholicCart.money(item.price)+' each</div><div class="quantity"><button type="button" data-action="minus" data-index="'+index+'" aria-label="Decrease quantity">−</button><strong>'+Number(item.quantity||1)+'</strong><button type="button" data-action="plus" data-index="'+index+'" aria-label="Increase quantity">+</button></div></div><div><strong>'+StickieholicCart.money((Number(item.price)||0)*(Number(item.quantity)||1))+'</strong><br><button class="remove" type="button" data-action="remove" data-index="'+index+'">Remove</button></div></article>').join('')+'</div><section class="summary"><div class="total"><span>Subtotal</span><span>'+StickieholicCart.money(total)+'</span></div><p class="notice">Delivery charges and final order details can be confirmed with Stickieholic when you send your order.</p><div class="actions"><button class="btn" id="order-whatsapp" type="button">Order on WhatsApp ↗</button><button class="btn dark" id="order-instagram" type="button">Order on Instagram ↗</button></div><p class="notice" id="order-note" aria-live="polite">WhatsApp opens with your full order prepared. For Instagram, your order message will be copied so you can paste it into a DM.</p></section>';
+ root.innerHTML='<div class="cart-list">'+items.map((item,index)=>'<article class="item"><img src="'+esc(item.image||'')+'" alt="'+esc(item.name)+'"><div><h3>'+esc(item.name)+'</h3><div class="item-price">'+StickieholicCart.money(item.price)+' each</div><div class="quantity"><button type="button" data-action="minus" data-index="'+index+'" aria-label="Decrease quantity">−</button><strong>'+Number(item.quantity||1)+'</strong><button type="button" data-action="plus" data-index="'+index+'" aria-label="Increase quantity">+</button></div></div><div><strong>'+StickieholicCart.money((Number(item.price)||0)*(Number(item.quantity)||1))+'</strong><br><button class="remove" type="button" data-action="remove" data-index="'+index+'">Remove</button></div></article>').join('')+'</div><section class="summary"><div class="total"><span>Subtotal</span><span>'+StickieholicCart.money(total)+'</span></div><p class="notice">Delivery charges and final order details can be confirmed with Stickieholic when you send your order.</p><div class="actions"><button class="btn" id="order-whatsapp" type="button">Order on WhatsApp ↗</button><button class="btn dark" id="order-instagram" type="button">Open Instagram DM ↗</button></div><p class="notice" id="order-note" aria-live="polite">WhatsApp opens with your full order prepared. Instagram opens a direct chat with your order message copied and ready to paste.</p></section>';
 };
 root.addEventListener('click',async event=>{
  const action=event.target.closest('[data-action]');
@@ -32,9 +32,16 @@ root.addEventListener('click',async event=>{
   if(event.target.id==='order-whatsapp'){window.open('https://wa.me/923132999127?text='+encodeURIComponent(message),'_blank','noopener');}
   else{
    const note=document.getElementById('order-note');
-   try{await navigator.clipboard.writeText(message);note.textContent='Your full order message has been copied. Paste it into your Instagram DM.';}
-   catch{note.textContent='Please copy your order details from the message shown below, then paste them into Instagram DM.';const area=document.createElement('textarea');area.value=message;area.style.position='fixed';area.style.opacity='0';document.body.appendChild(area);area.select();try{document.execCommand('copy')}catch{}area.remove();}
-   window.open('https://www.instagram.com/stickieholic/','_blank','noopener');
+   // Open the direct Instagram conversation immediately within the user click,
+   // avoiding popup blockers while the order text is copied.
+   window.open('https://ig.me/m/stickieholic','_blank','noopener');
+   try{
+    await navigator.clipboard.writeText(message);
+    note.textContent='Your complete order is copied! In the Instagram chat that just opened, paste it into the message box and tap Send.';
+   }catch{
+    note.textContent='Instagram chat opened. Clipboard access was blocked, so please copy the order details manually and paste them into the chat.';
+    const area=document.createElement('textarea');area.value=message;area.setAttribute('readonly','');area.style.position='fixed';area.style.left='-9999px';document.body.appendChild(area);area.select();try{document.execCommand('copy');note.textContent='Your complete order is copied! Paste it into the Instagram chat and tap Send.';}catch{}area.remove();
+   }
   }
  }
 });
