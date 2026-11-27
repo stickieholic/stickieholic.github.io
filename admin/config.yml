@@ -74,4 +74,7 @@ collections:
                 value_field: "name"
                 display_fields: ["name", "category"]
                 required: false
+              - { label: "SEO Meta Title", name: "seo_title", widget: "string", required: false, hint: "Google search title; aim for about 50–60 characters." }
+              - { label: "SEO Meta Description", name: "seo_description", widget: "text", required: false, hint: "Short search-result summary; aim for about 150–160 characters." }
+              - { label: "Image Alt Text", name: "image_alt", widget: "string", required: false, hint: "Describe the product image for accessibility and image search." }
               - { label: "Featured", name: "featured", widget: "boolean", default: false }
