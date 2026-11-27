@@ -44,19 +44,18 @@ document.getElementById('year').textContent=new Date().getFullYear();
  const esc=value=>String(value??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
  const normalize=value=>String(value??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase().trim();
  function getCategory(product){
-  const text=normalize([product.name,product.category,product.description].filter(Boolean).join(' '));
-  if(/moon|celestial|galaxy|space|lunar|star phase/.test(text)) return {id:'moon',label:'Moon & Celestial'};
-  if(/music|rock|guitar|vinyl|band|rockstar|punk/.test(text)) return {id:'music',label:'Music & Rock'};
-  if(/vintage|retro|nostalgia|romance|antique|old[- ]school/.test(text)) return {id:'vintage',label:'Vintage'};
-  if(/motivational|affirmation|positive|self.love|inspirational/.test(text)) return {id:'motivational',label:'Motivational'};
-  if(/funky|cherry|cute|kawaii|bow|bunny|bear|kawaii/.test(text)) return {id:'cute',label:'Cute & Funky'};
-  return {id:'aesthetic',label:'Aesthetic'};
+  const label=String(product.category||'Uncategorized').trim()||'Uncategorized';
+  return {id:label,label};
+ }
+ function renderCategoryOptions(){
+  const categories=[...new Set(products.map(product=>getCategory(product).label))].sort((a,b)=>a.localeCompare(b));
+  categoryList.innerHTML='<button class="category-chip active" type="button" data-category="all">♡ &nbsp; All stickers</button>'+categories.map(name=>'<button class="category-chip" type="button" data-category="'+esc(name)+'">'+esc(name)+'</button>').join('');
  }
  function renderProducts(){
   const term=normalize(searchInput.value);
   const matches=products.filter(product=>{
    const text=normalize([product.name,product.category,product.description].filter(Boolean).join(' '));
-   return (!term||text.includes(term))&&(activeCategory==='all'||getCategory(product).id===activeCategory);
+   return (!term||text.includes(term))&&(activeCategory==='all'||getCategory(product).label===activeCategory);
   });
   clearButton.hidden=!searchInput.value;
   categoryList.querySelectorAll('[data-category]').forEach(button=>{
@@ -96,6 +95,7 @@ document.getElementById('year').textContent=new Date().getFullYear();
    if(!response.ok)throw new Error('Catalogue request failed: '+response.status);
    const catalogue=await response.json();
    products=Array.isArray(catalogue)?catalogue:(Array.isArray(catalogue.products)?catalogue.products:[]);
+   renderCategoryOptions();
    renderProducts();
    if(!products.length)grid.innerHTML='<p class="catalogue-status">New sticker designs are coming soon. Message us to request a custom design!</p>';
   }catch(error){
