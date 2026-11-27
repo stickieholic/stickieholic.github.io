@@ -7,6 +7,17 @@ media_folder: "images/uploads"
 public_folder: "/images/uploads"
 
 collections:
+  - name: "categories"
+    label: "Categories"
+    folder: "data/categories"
+    create: true
+    slug: "{{slug}}"
+    extension: "json"
+    format: "json"
+    fields:
+      - { label: "Category name", name: "name", widget: "string" }
+      - { label: "Description (optional)", name: "description", widget: "text", required: false }
+
   - name: "catalog"
     label: "Product catalogue"
     files:
@@ -27,5 +38,12 @@ collections:
                 widget: "list"
                 required: false
                 field: { label: "Picture", name: "image", widget: "image" }
-              - { label: "Category", name: "category", widget: "string", required: false }
+              - label: "Category"
+                name: "category"
+                widget: "relation"
+                collection: "categories"
+                search_fields: ["name"]
+                value_field: "name"
+                display_fields: ["name"]
+                required: true
               - { label: "Featured", name: "featured", widget: "boolean", default: false }
