@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#fff7f5">
+<meta name="theme-color" content="#fff7f5">\n<meta name="description" content="Shop aesthetic and customized stickers in Pakistan at Stickieholic.">\n<meta property="og:title" content="Product Details | Stickieholic">\n<meta property="og:description" content="Discover your favourite stickers at Stickieholic.">
 <title>Product Details | Stickieholic</title>
 <style>
 :root{--ink:#392d35;--muted:#766b73;--pink:#f6b8c8;--rose:#e77e9d;--cream:#fff7f1;--lilac:#e9def8;--white:#fff;--line:#f0e4e5}
@@ -29,9 +29,21 @@ const esc=value=>String(value??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt
   const product=products.find(item=>item.name===requested);
   if(!product){content.innerHTML='<div class="empty"><h2>Product not found</h2><a class="back" href="./#collections">Back to collections</a></div>';return;}
   const pictures=Array.isArray(product.images)?product.images.map(item=>typeof item==='string'?item:(item&&item.image)||'').filter(Boolean):(product.image?[product.image]:[]);
-  const description=String(product.description||'Product details coming soon.').replace(/\r/g,'');
+  const description=String(product.description||'Product details coming soon.').replace(/\\r/g,'');
+  const metaTitle=String(product.seo_title||product.name+' | Stickieholic').trim();
+  const metaDescription=String(product.seo_description||description.replace(/[#*_>\\-]/g,' ').replace(/\\s+/g,' ').trim().slice(0,160)).trim();
+  document.title=metaTitle;
+  const setMeta=(selector,attribute,value)=>{
+   let tag=document.head.querySelector(selector);
+   if(!tag){tag=document.createElement('meta');const match=selector.match(/\\[(name|property)="([^"]+)"\\]/);tag.setAttribute(match[1],match[2]);document.head.appendChild(tag);}
+   tag.setAttribute(attribute,value);
+  };
+  setMeta('meta[name="description"]','content',metaDescription);
+  setMeta('meta[property="og:title"]','content',metaTitle);
+  setMeta('meta[property="og:description"]','content',metaDescription);
+  const imageAlt=String(product.image_alt||product.name||'Stickieholic product').trim();
   const message=encodeURIComponent('Hi Stickieholic! I would like to order '+product.name+'. Please guide me with the next steps.');
-  content.innerHTML='<div class="layout"><div>'+(pictures.length?'<div class="gallery-stage"><img id="main-photo" class="main-photo" src="'+esc(pictures[0])+'" alt="'+esc(product.name)+'"><button class="slide-arrow prev" id="prev-photo" type="button" aria-label="Previous image">‹</button><button class="slide-arrow next" id="next-photo" type="button" aria-label="Next image">›</button></div><div class="thumbs">'+pictures.map((src,i)=>'<img class="thumb '+(i===0?'active':'')+'" src="'+esc(src)+'" alt="Product picture '+(i+1)+'" data-index="'+i+'">').join('')+'</div>':'<div class="empty">No product pictures uploaded yet.</div>')+'</div><section class="info"><span class="kicker">'+esc(product.category||'Stickieholic collection')+'</span><h1>'+esc(product.name)+'</h1>'+(product.price?'<div class="price">Rs. '+esc(product.price)+'</div>':'')+'<div class="description">'+esc(description)+'</div><div class="actions"><button class="btn cart-add" type="button" data-add-to-cart data-name="'+esc(product.name)+'" data-price="'+esc(product.price||0)+'" data-image="'+esc(pictures[0]||'')+'">Add to cart +</button><a class="btn secondary" href="./cart.html">View cart 🛒</a></div><p class="note">Need help? Contact us on WhatsApp for product and delivery details.</p></section></div>';
+  content.innerHTML='<div class="layout"><div>'+(pictures.length?'<div class="gallery-stage"><img id="main-photo" class="main-photo" src="'+esc(pictures[0])+'" alt="'+esc(imageAlt)+'"><button class="slide-arrow prev" id="prev-photo" type="button" aria-label="Previous image">‹</button><button class="slide-arrow next" id="next-photo" type="button" aria-label="Next image">›</button></div><div class="thumbs">'+pictures.map((src,i)=>'<img class="thumb '+(i===0?'active':'')+'" src="'+esc(src)+'" alt="'+esc(imageAlt+' - image '+(i+1))+'" data-index="'+i+'">').join('')+'</div>':'<div class="empty">No product pictures uploaded yet.</div>')+'</div><section class="info"><span class="kicker">'+esc(product.category||'Stickieholic collection')+'</span><h1>'+esc(product.name)+'</h1>'+(product.price?'<div class="price">Rs. '+esc(product.price)+'</div>':'')+'<div class="description">'+esc(description)+'</div><div class="actions"><button class="btn cart-add" type="button" data-add-to-cart data-name="'+esc(product.name)+'" data-price="'+esc(product.price||0)+'" data-image="'+esc(pictures[0]||'')+'">Add to cart +</button><a class="btn secondary" href="./cart.html">View cart 🛒</a></div><p class="note">Need help? Contact us on WhatsApp for product and delivery details.</p></section></div>';
   let currentIndex=0;
   const showPicture=index=>{if(!pictures.length)return;currentIndex=(index+pictures.length)%pictures.length;document.getElementById('main-photo').src=pictures[currentIndex];document.querySelectorAll('.thumb').forEach((item,i)=>item.classList.toggle('active',i===currentIndex));};
   document.querySelectorAll('.thumb').forEach(thumb=>thumb.addEventListener('click',()=>showPicture(Number(thumb.dataset.index))));
