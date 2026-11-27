@@ -10,6 +10,7 @@ collections:
   - name: "categories"
     label: "Categories"
     folder: "data/categories"
+    identifier_field: "name"
     create: true
     slug: "{{slug}}"
     extension: "json"
@@ -21,6 +22,7 @@ collections:
   - name: "subcategories"
     label: "Subcategories"
     folder: "data/subcategories"
+    identifier_field: "name"
     create: true
     slug: "{{slug}}"
     extension: "json"
