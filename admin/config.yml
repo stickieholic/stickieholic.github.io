@@ -18,6 +18,24 @@ collections:
       - { label: "Category name", name: "name", widget: "string" }
       - { label: "Description (optional)", name: "description", widget: "text", required: false }
 
+  - name: "subcategories"
+    label: "Subcategories"
+    folder: "data/subcategories"
+    create: true
+    slug: "{{slug}}"
+    extension: "json"
+    format: "json"
+    fields:
+      - { label: "Subcategory name", name: "name", widget: "string" }
+      - label: "Parent category"
+        name: "category"
+        widget: "relation"
+        collection: "categories"
+        search_fields: ["name"]
+        value_field: "name"
+        display_fields: ["name"]
+      - { label: "Description (optional)", name: "description", widget: "text", required: false }
+
   - name: "catalog"
     label: "Product catalogue"
     files:
@@ -46,4 +64,12 @@ collections:
                 value_field: "name"
                 display_fields: ["name"]
                 required: true
+              - label: "Subcategory"
+                name: "subcategory"
+                widget: "relation"
+                collection: "subcategories"
+                search_fields: ["name"]
+                value_field: "name"
+                display_fields: ["name", "category"]
+                required: false
               - { label: "Featured", name: "featured", widget: "boolean", default: false }
