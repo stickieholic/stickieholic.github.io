@@ -68,6 +68,16 @@ main{margin:0!important;padding:0!important}
 .product-photo{background:#fff0f2!important}
 footer{background:rgba(255,245,244,.96)!important}
 
+
+/* Emergency layout guard: keep the hero directly under the navigation */
+html,body{margin:0!important;padding:0!important}
+body{display:block!important;min-height:100vh;overflow-x:hidden}
+body>header{display:block!important;position:sticky!important;top:0!important;margin:0!important}
+body>.drawer-backdrop[hidden],body>.buy-modal[hidden]{display:none!important}
+body>.category-drawer{position:fixed!important}
+body>main{display:block!important;position:relative!important;margin:0!important;padding:0!important;inset:auto!important}
+body>main>.hero{display:block!important;position:relative!important;margin:0!important;top:0!important;inset:auto!important;min-height:0!important;padding:86px 0 82px!important}
+
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Cormorant+Garamond:ital,wght@0,600;0,700;1,700&family=Nunito:wght@400;500;600;700;800;900&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet"></head>
 <body>
