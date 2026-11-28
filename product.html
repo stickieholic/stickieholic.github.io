@@ -33,14 +33,14 @@ const esc=value=>String(value??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt
   const metaTitle=String(product.seo_title||product.name+' | Stickieholic').trim();
   const metaDescription=String(product.seo_description||description.replace(/[#*_>\\-]/g,' ').replace(/\\s+/g,' ').trim().slice(0,160)).trim();
   document.title=metaTitle;
-  const setMeta=(selector,attribute,value)=>{
-   let tag=document.head.querySelector(selector);
-   if(!tag){tag=document.createElement('meta');const match=selector.match(/\\[(name|property)="([^"]+)"\\]/);tag.setAttribute(match[1],match[2]);document.head.appendChild(tag);}
-   tag.setAttribute(attribute,value);
+  const setMeta=(keyAttribute,keyValue,value)=>{
+   let tag=document.head.querySelector('meta['+keyAttribute+'="'+keyValue+'"]');
+   if(!tag){tag=document.createElement('meta');tag.setAttribute(keyAttribute,keyValue);document.head.appendChild(tag);}
+   tag.setAttribute('content',value);
   };
-  setMeta('meta[name="description"]','content',metaDescription);
-  setMeta('meta[property="og:title"]','content',metaTitle);
-  setMeta('meta[property="og:description"]','content',metaDescription);
+  setMeta('name','description',metaDescription);
+  setMeta('property','og:title',metaTitle);
+  setMeta('property','og:description',metaDescription);
   const imageAlt=String(product.image_alt||product.name||'Stickieholic product').trim();
   const message=encodeURIComponent('Hi Stickieholic! I would like to order '+product.name+'. Please guide me with the next steps.');
   content.innerHTML='<div class="layout"><div>'+(pictures.length?'<div class="gallery-stage"><img id="main-photo" class="main-photo" src="'+esc(pictures[0])+'" alt="'+esc(imageAlt)+'"><button class="slide-arrow prev" id="prev-photo" type="button" aria-label="Previous image">‹</button><button class="slide-arrow next" id="next-photo" type="button" aria-label="Next image">›</button></div><div class="thumbs">'+pictures.map((src,i)=>'<img class="thumb '+(i===0?'active':'')+'" src="'+esc(src)+'" alt="'+esc(imageAlt+' - image '+(i+1))+'" data-index="'+i+'">').join('')+'</div>':'<div class="empty">No product pictures uploaded yet.</div>')+'</div><section class="info"><span class="kicker">'+esc(product.category||'Stickieholic collection')+'</span><h1>'+esc(product.name)+'</h1>'+(product.price?'<div class="price">Rs. '+esc(product.price)+'</div>':'')+'<div class="description">'+esc(description)+'</div><div class="actions"><button class="btn cart-add" type="button" data-add-to-cart data-name="'+esc(product.name)+'" data-price="'+esc(product.price||0)+'" data-image="'+esc(pictures[0]||'')+'">Add to cart +</button><a class="btn secondary" href="./cart.html">View cart 🛒</a></div><p class="note">Need help? Contact us on WhatsApp for product and delivery details.</p></section></div>';
