@@ -10,6 +10,24 @@
 <style>
 :root{--ink:#392d35;--muted:#766b73;--pink:#f6b8c8;--rose:#e77e9d;--cream:#fff7f1;--lilac:#e9def8;--white:#fff;--line:#f0e4e5}
 *{box-sizing:border-box}body{margin:0;background:#fffdfb;color:var(--ink);font-family:ui-rounded,"Trebuchet MS",system-ui,sans-serif}a{color:inherit;text-decoration:none}.wrap{width:min(1080px,92%);margin:auto}header{background:#fffdfbef;border-bottom:1px solid var(--line)}.nav{height:72px;display:flex;align-items:center;justify-content:space-between}.brand-lockup{display:flex!important;flex-direction:column!important;align-items:flex-end!important;justify-content:center!important;gap:2px!important;line-height:1!important;text-align:right!important;width:max-content}.brand-lockup .brand-name{display:block;font-family:'Playfair Display',Georgia,serif!important;font-weight:800!important;letter-spacing:.025em;font-size:1.35rem;line-height:1.05!important;text-align:right!important}.brand-lockup .brand-owner{display:block;width:100%;font-family:'Caveat','Brush Script MT',cursive!important;font-size:1.08rem!important;font-weight:600!important;letter-spacing:.02em;color:var(--rose,#e77e9d)!important;text-align:right!important;text-transform:none!important;line-height:1.05!important}.brand{font-weight:950;letter-spacing:.04em;font-size:1.2rem}.brand span{color:var(--rose)}.back{color:#a24e6b;font-weight:800}.layout{display:grid;grid-template-columns:1fr 1fr;gap:48px;padding:55px 0 75px;align-items:start}.gallery-stage{position:relative}.main-photo{width:100%;height:430px;object-fit:contain;background:#fff0f3;border-radius:25px;padding:12px;display:block}.slide-arrow{position:absolute;top:50%;transform:translateY(-50%);width:42px;height:42px;border:0;border-radius:50%;background:#ffffffed;color:var(--ink);font-size:1.5rem;font-weight:900;box-shadow:0 4px 16px #392d3525;cursor:pointer}.slide-arrow.prev{left:12px}.slide-arrow.next{right:12px}.thumbs{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}.thumb{width:82px;height:82px;object-fit:cover;border-radius:13px;border:2px solid transparent;cursor:pointer;background:#fff0f3}.thumb.active{border-color:var(--rose)}.kicker{color:var(--rose);font-size:.78rem;font-weight:900;letter-spacing:.13em;text-transform:uppercase}.info h1{font-size:clamp(2rem,4vw,3rem);line-height:1.1;letter-spacing:-.04em;margin:12px 0}.price{font-size:1.35rem;font-weight:950;color:#a24e6b;margin:18px 0}.description{color:var(--muted);line-height:1.8;white-space:pre-line}.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}.btn{display:inline-flex;padding:14px 20px;border-radius:99px;background:var(--rose);color:white;font-weight:850}.btn.secondary{background:var(--ink)}.btn.cart-add{background:#fff;color:#a24e6b;border:1px solid var(--rose);cursor:pointer;font:inherit;font-weight:850}.note{font-size:.85rem;color:var(--muted);margin-top:18px}.empty{padding:70px 0;text-align:center;color:var(--muted)}footer{border-top:1px solid var(--line);padding:25px 0;color:var(--muted);font-size:.85rem}@media(max-width:760px){.layout{grid-template-columns:1fr;gap:28px;padding-top:30px}.main-photo{height:340px}.thumb{width:70px;height:70px}}
+
+/* Stickieholic spring floral theme */
+:root{--ink:#573744;--muted:#896b78;--pink:#f8c6d1;--rose:#d95d88;--cream:#fff1f3;--lilac:#f7dce8;--line:#f2cbd5}
+body{background:linear-gradient(180deg,#fff5f5 0%,#fff9f8 48%,#fff0f2 100%);color:var(--ink);position:relative}
+body:before,body:after{content:"✿";position:fixed;z-index:0;pointer-events:none;color:#e8a4b5;opacity:.17;font-size:clamp(110px,19vw,230px);line-height:1}
+body:before{top:90px;left:-55px;transform:rotate(-22deg)}
+body:after{right:-55px;bottom:-35px;transform:rotate(18deg)}
+header,main,footer{position:relative;z-index:1}
+header{background:#fff7f5ed;border-color:#f1cbd5;box-shadow:0 5px 24px #a94f7710}
+.layout{background:linear-gradient(135deg,#fffaf9dd,#fff0f3dd);border:1px solid #f1d1d9;border-radius:30px;padding:34px;margin-top:30px;margin-bottom:55px;box-shadow:0 16px 38px #a94f7710}
+.main-photo{background:#fff1f4;border:1px solid #f2d1da;box-shadow:0 12px 28px #a94f7710}
+.thumb{background:#fff1f4}.thumb.active{border-color:#d95d88}
+.kicker{color:#c2557d}.info h1{color:#633447}.price{color:#b04d73}
+.btn{background:linear-gradient(135deg,#e8799c,#c94778);box-shadow:0 10px 22px #c9477825}
+.btn.secondary{background:#855064}.btn.cart-add{background:#fff8fa;color:#a64c70;border-color:#df7b9c}
+.note{color:#896b78}
+footer{background:#fff7f6;border-color:#efcbd4}
+
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet"></head>
 <body>
