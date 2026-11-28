@@ -193,6 +193,8 @@ document.getElementById('year').textContent=new Date().getFullYear();
    if(!response.ok)throw new Error('Catalogue request failed: '+response.status);
    const catalogue=await response.json();
    products=Array.isArray(catalogue)?catalogue:(Array.isArray(catalogue.products)?catalogue.products:[]);
+   // Shuffle only the homepage display order; the source catalogue and product data stay unchanged.
+   for(let i=products.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[products[i],products[j]]=[products[j],products[i]];}
    await loadCategoryRecords();
    renderCategoryOptions();
    renderProducts();
