@@ -11,24 +11,40 @@
  const count=()=>read().reduce((sum,item)=>sum+Number(item.quantity||0),0);
  const updateBadges=()=>document.querySelectorAll('[data-cart-count]').forEach(el=>{el.textContent=count();el.hidden=count()===0;});
  const flyStickerToCart=(button,product)=>{
-  const target=document.querySelector('a[href="./cart.html"]');
+  const target=document.querySelector('a[href$="cart.html"]');
   if(!target||!button||window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
   const from=button.getBoundingClientRect(),to=target.getBoundingClientRect();
+  if(!from.width||!from.height||!to.width||!to.height)return;
+  const startX=from.left+from.width/2-21,startY=from.top+from.height/2-21;
+  const endX=to.left+to.width/2-15,endY=to.top+to.height/2-15;
   const flyer=document.createElement('span');
   flyer.setAttribute('aria-hidden','true');
-  flyer.style.cssText='position:fixed;z-index:9999;left:'+(from.left+from.width/2-21)+'px;top:'+(from.top+from.height/2-21)+'px;width:42px;height:42px;border-radius:50%;background:#fff7fb;border:2px solid #f2bfd0;box-shadow:0 8px 22px #392d3530;display:grid;place-items:center;overflow:hidden;pointer-events:none;';
+  flyer.style.cssText='position:fixed;display:grid;place-items:center;z-index:2147483000;left:'+startX+'px;top:'+startY+'px;width:42px;height:42px;border-radius:50%;background:#fff7fb;border:2px solid #f2bfd0;box-shadow:0 8px 22px #392d3530;overflow:hidden;pointer-events:none;will-change:left,top,transform,opacity;';
   if(product.image){
-   const img=document.createElement('img');img.src=product.image;img.alt='';img.style.cssText='width:100%;height:100%;object-fit:contain;padding:3px;';flyer.appendChild(img);
+   const img=document.createElement('img');img.src=product.image;img.alt='';img.style.cssText='display:block;width:100%;height:100%;object-fit:contain;padding:3px;';flyer.appendChild(img);
   }else{flyer.textContent='♡';flyer.style.fontSize='27px';flyer.style.color='#e34278';}
   document.body.appendChild(flyer);
-  const dx=to.left+to.width/2-(from.left+from.width/2);
-  const dy=to.top+to.height/2-(from.top+from.height/2);
-  const animation=flyer.animate([
-   {transform:'translate(0,0) scale(1) rotate(0deg)',opacity:1,offset:0},
-   {transform:'translate('+dx*.38+'px,'+(dy*.25-82)+'px) scale(1.18) rotate(14deg)',opacity:1,offset:.48},
-   {transform:'translate('+dx+'px,'+dy+'px) scale(.18) rotate(28deg)',opacity:.15,offset:1}
-  ],{duration:720,easing:'cubic-bezier(.22,.72,.28,1)',fill:'forwards'});
-  animation.onfinish=()=>flyer.remove();
+  const dx=endX-startX,dy=endY-startY;
+  const frames=[
+   {left:startX+'px',top:startY+'px',transform:'scale(1) rotate(0deg)',opacity:1,offset:0},
+   {left:(startX+dx*.38)+'px',top:(startY+dy*.25-78)+'px',transform:'scale(1.18) rotate(14deg)',opacity:1,offset:.48},
+   {left:endX+'px',top:endY+'px',transform:'scale(.18) rotate(28deg)',opacity:.12,offset:1}
+  ];
+  let finished=false;
+  const cleanup=()=>{if(finished)return;finished=true;flyer.remove();};
+  try{
+   if(typeof flyer.animate==='function'){
+    const animation=flyer.animate(frames,{duration:760,easing:'cubic-bezier(.22,.72,.28,1)',fill:'forwards'});
+    animation.onfinish=cleanup;
+    animation.oncancel=cleanup;
+   }else{
+    flyer.style.transition='left 760ms cubic-bezier(.22,.72,.28,1),top 760ms cubic-bezier(.22,.72,.28,1),transform 760ms cubic-bezier(.22,.72,.28,1),opacity 760ms ease';
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+     flyer.style.left=endX+'px';flyer.style.top=endY+'px';flyer.style.transform='scale(.18) rotate(28deg)';flyer.style.opacity='.12';
+    }));
+    window.setTimeout(cleanup,850);
+   }
+  }catch(error){cleanup();console.warn('Cart flight animation unavailable:',error);}
  };
  document.addEventListener('click',event=>{
   const button=event.target.closest('[data-add-to-cart]');
