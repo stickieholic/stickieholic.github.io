@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="1200" viewBox="0 0 900 1200">
+<defs>
+ <radialGradient id="petal" cx="45%" cy="35%" r="70%"><stop stop-color="#fff7f5"/><stop offset=".52" stop-color="#f6c6cf"/><stop offset="1" stop-color="#e9a0b2"/></radialGradient>
+ <radialGradient id="petal2" cx="40%" cy="35%" r="70%"><stop stop-color="#fff8f4"/><stop offset=".58" stop-color="#f4b9c6"/><stop offset="1" stop-color="#e99daf"/></radialGradient>
+ <g id="flower">
+  <g fill="url(#petal)" stroke="#e9a6b5" stroke-opacity=".48" stroke-width="2">
+   <ellipse cy="-57" rx="43" ry="77"/><ellipse transform="rotate(72)" cy="-57" rx="43" ry="77"/><ellipse transform="rotate(144)" cy="-57" rx="43" ry="77"/><ellipse transform="rotate(216)" cy="-57" rx="43" ry="77"/><ellipse transform="rotate(288)" cy="-57" rx="43" ry="77"/>
+  </g>
+  <circle r="21" fill="#f9e6ce"/>
+  <g stroke="#fff0d8" stroke-width="3" stroke-linecap="round"><path d="M0-4L-8-34M3-3L12-30M-3 3L-27 13M3 4L26 17M0 5L-2 34"/></g>
+  <g fill="#fff0d8"><circle cx="-8" cy="-34" r="4"/><circle cx="12" cy="-30" r="4"/><circle cx="-27" cy="13" r="4"/><circle cx="26" cy="17" r="4"/><circle cx="-2" cy="34" r="4"/></g>
+ </g>
+</defs>
+<rect width="900" height="1200" fill="#fff5f4"/>
+<g opacity=".72">
+ <use href="#flower" transform="translate(80 45) scale(1.12)"/>
+ <use href="#flower" transform="translate(315 -20) scale(.88) rotate(24)"/>
+ <use href="#flower" transform="translate(590 12) scale(1.05) rotate(-18)"/>
+ <use href="#flower" transform="translate(845 60) scale(1.08) rotate(18)"/>
+ <use href="#flower" transform="translate(-25 385) scale(1.15) rotate(15)"/>
+ <use href="#flower" transform="translate(920 520) scale(1.05) rotate(-15)"/>
+ <use href="#flower" transform="translate(10 890) scale(1.12) rotate(-15)"/>
+ <use href="#flower" transform="translate(880 930) scale(1.2) rotate(20)"/>
+ <use href="#flower" transform="translate(620 1190) scale(1.08) rotate(12)"/>
+ <use href="#flower" transform="translate(835 1160) scale(.88) rotate(-10)"/>
+</g>
+</svg>
